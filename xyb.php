@@ -71,22 +71,22 @@ foreach ($config['userList'] as $k => $v) {
         pushWechat($pushToken, '签到失败', $signData['msg']);
         return returnJsonData(201, '提交签到信息失败');
     }
+
     // 如果距离签到时间不足9小时，则不签退
     if (time() - strtotime($signInfo['clockInfo']['inTime']) > 32400) {
         $sign = sign($v['sessionId'], $traineeId, $v,1);
         if ($sign['code'] == 200) {
-            $arr = array('code' => 200, 'msg' => $sign['msg']);
             pushWechat($pushToken, '签到成功', '签到成功');
+            return returnJsonData(200, $sign['msg']);
         }
     }
+
     $sign = sign($v['sessionId'], $traineeId, $v);
     if ($sign['code'] == 200) {
-        $arr = array('code' => 200, 'msg' => $sign['msg']);
         pushWechat($pushToken, '签到成功', '签到成功');
+        return returnJsonData(200, $sign['msg']);
     }
 }
-
-echo json_encode($arr, JSON_UNESCAPED_UNICODE);
 
 function pushWechat($token, $title, $content){
     $url = 'http://www.pushplus.plus/send';
