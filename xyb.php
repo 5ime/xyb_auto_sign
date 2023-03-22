@@ -4,8 +4,8 @@
  * title: 校友邦自动化脚本
  * description: 校友邦自动签到签退健康上报
  * author: iami233
- * version: 1.0.0
- * update: 2022-12-26
+ * version: 1.0.1
+ * update: 2023-3-22
  * github: https://github.com/5ime/xyb_auto_sign
  * 
  */
@@ -199,8 +199,25 @@ function postSignData($d = array()){
 }
 
 function getHeaderToken($d){
-    $url = 'https://tenapi.cn/lab/';
-    $data = json_decode(curl($url, $d), true);
+    $characters = ["5", "b", "f", "A", "J", "Q", "g", "a", "l", "p", "s", "q", "H", "4", "L", "Q", "g", "1", "6", "Q", "Z", "v", "w", "b", "c", "e", "2", "2", "m", "l", "E", "g", "G", "H", "I", "r", "o", "s", "d", "5", "7", "x", "t", "J", "S", "T", "F", "v", "w", "4", "8", "9", "0", "K", "E", "3", "4", "0", "m", "r", "i", "n"];
+    $indexes = range(0, count($characters) - 1);
+    shuffle($indexes);
+    $r = array_slice($indexes, -20);
+    $s = "";
+    $x = '';
+    foreach ($r as $key => $index) {
+        $s .= $characters[$index];
+        $x .= $index;
+        if ($key < count($r) - 1) {
+            $x .= '_';
+        }
+    }
+    $time = time();
+    $data = array(
+        'm' => md5(urlencode($d['adcode'].$d['address'].$d['clockStatus'].$d['punchInStatus'].$d['traineeId'].$time.$s)),
+        't' => $time,
+        's' => $x,
+    );
     return $data;
 }
 
